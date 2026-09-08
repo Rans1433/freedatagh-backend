@@ -172,33 +172,39 @@ if (Number(payment.amount) !== expectedAmount) {
     });
 
 
-  } catch (error) {
+} catch (error) {
+  console.error(
+    "ERROR:",
+    error.response?.data || error.message
+  );
 
-    console.error(
-      "ERROR:",
-      error.response?.data || error.message
-    );
+  const requestUrl = error.config?.url || "";
 
-
-    // DataMart error
-    if (error.response?.data) {
-      return res.status(error.response.status || 500).json({
-        success: false,
-        message: "DataMart order could not be created",
-        details: error.response.data
-      });
-    }
-
-
-    // General error
-    return res.status(500).json({
+  // Paystack verification error
+  if (requestUrl.includes("api.paystack.co")) {
+    return res.status(error.response?.status || 500).json({
       success: false,
-      message: "Could not verify payment",
-      details: error.message
+      message: "Could not verify payment with Paystack",
+      details: error.response?.data || error.message
     });
-
   }
 
+  // DataMart order error
+  if (requestUrl.includes("api.datamartgh.shop")) {
+    return res.status(error.response?.status || 500).json({
+      success: false,
+      message: "DataMart order could not be created",
+      details: error.response?.data || error.message
+    });
+  }
+
+  // General error
+  return res.status(500).json({
+    success: false,
+    message: "Could not verify payment",
+    details: error.response?.data || error.message
+  });
+}
 });
 
 
