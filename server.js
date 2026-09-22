@@ -242,6 +242,18 @@ app.get("/balance", async (req, res) => {
 });
 
 
+// TERMS OF SERVICE PAGE
+app.get("/TermsofService", (req, res) => {
+  res.sendFile(__dirname + "/Terms.html");
+});
+
+
+// PRIVACY POLICY PAGE
+app.get("/PrivacyPolicy", (req, res) => {
+  res.sendFile(__dirname + "/Privacy.html");
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
