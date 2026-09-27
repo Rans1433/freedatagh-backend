@@ -163,13 +163,20 @@ if (Number(payment.amount) !== expectedAmount) {
     // DataMart successfully accepts the order
     processedPayments.add(reference);
 
+return res.status(201).json({
+  success: true,
+  message: "Payment verified and DataMart order created",
 
-    return res.status(201).json({
-      success: true,
-      message: "Payment verified and DataMart order created",
-      reference: reference,
-      dataOrder: dataResponse.data
-    });
+  reference: reference,
+
+  dataMartReference:
+    dataResponse.data?.data?.orderReference,
+
+  processingMethod:
+    dataResponse.data?.data?.processingMethod,
+
+  dataOrder: dataResponse.data
+});
 
 
 } catch (error) {
@@ -209,6 +216,7 @@ if (Number(payment.amount) !== expectedAmount) {
 
 
 // CHECK DATAMART WALLET BALANCE
+// CHECK DATAMART WALLET BALANCE
 app.get("/balance", async (req, res) => {
 
   try {
@@ -242,6 +250,42 @@ app.get("/balance", async (req, res) => {
 });
 
 
+// CHECK DATAMART ORDER STATUS
+app.get("/order-status/:reference", async (req, res) => {
+
+  const reference = req.params.reference;
+
+  try {
+
+    const response = await axios.get(
+      `https://api.datamartgh.shop/api/developer/order-status/${reference}`,
+      {
+        headers: {
+          "X-API-Key": DATAMART_API_KEY
+        }
+      }
+    );
+
+    res.json(response.data);
+
+  } catch (error) {
+
+    console.error(
+      "ORDER STATUS ERROR:",
+      error.response?.data || error.message
+    );
+
+    res.status(error.response?.status || 500).json({
+      success: false,
+      message: "Could not get DataMart order status",
+      details: error.response?.data || error.message
+    });
+
+  }
+
+});
+
+
 // TERMS OF SERVICE PAGE
 app.get("/TermsofService", (req, res) => {
   res.sendFile(__dirname + "/Terms.html");
@@ -254,6 +298,7 @@ app.get("/PrivacyPolicy", (req, res) => {
 });
 
 
+// START SERVER
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
