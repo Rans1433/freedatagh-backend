@@ -1,4 +1,4 @@
-const express = require("express");
+KKconst express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 require("dotenv").config();
@@ -286,6 +286,40 @@ app.get("/order-status/:reference", async (req, res) => {
 });
 
 
+// CHECK DATAMART DELIVERY TRACKER
+app.get("/delivery-tracker", async (req, res) => {
+
+  try {
+
+    const response = await axios.get(
+      "https://api.datamartgh.shop/api/developer/delivery-tracker",
+      {
+        headers: {
+          "X-API-Key": DATAMART_API_KEY
+        }
+      }
+    );
+
+    res.json(response.data);
+
+  } catch (error) {
+
+    console.error(
+      "DELIVERY TRACKER ERROR:",
+      error.response?.data || error.message
+    );
+
+    res.status(error.response?.status || 500).json({
+      success: false,
+      message: "Could not get DataMart delivery tracker",
+      details: error.response?.data || error.message
+    });
+
+  }
+
+});
+
+
 // TERMS OF SERVICE PAGE
 app.get("/TermsofService", (req, res) => {
   res.sendFile(__dirname + "/Terms.html");
@@ -302,3 +336,4 @@ app.get("/PrivacyPolicy", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
