@@ -94,7 +94,7 @@ if (!network || !bundle || !recipient) {
 
 // Expected prices for each bundle
 const bundlePrices = {
-  "1GB": 4.85,
+  "1GB": 4.84,
   "2GB": 9.8,
   "5GB": 24,
   "10GB": 48.99,
