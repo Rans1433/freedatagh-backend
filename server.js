@@ -91,8 +91,6 @@ if (!network || !bundle || !recipient) {
   });
 }
 
-
-// Expected prices for each bundle
 const bundlePrices = {
   "1GB": 4.8,
   "2GB": 9.8,
@@ -105,7 +103,7 @@ const bundlePrices = {
 // Check that the bundle exists
 const expectedPrice = bundlePrices[bundle];
 
-if (!expectedPrice) {
+if (expectedPrice === undefined){
   return res.status(400).json({
     success: false,
     message: "Invalid bundle"
@@ -114,7 +112,7 @@ if (!expectedPrice) {
 
 
 // Paystack amount is in pesewas
-const expectedAmount = expectedPrice * 100;
+    const expectedAmount = Math.round(expectedPrice * 100);
 
 
 // Check exact amount paid
